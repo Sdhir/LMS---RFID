@@ -1,9 +1,10 @@
 // Arduino internal EEPROM demonstration
- 
+// Code for memory storage
+
 #include <EEPROM.h>
 int zz;
 int EEsize = 250; // size in bytes of your board's EEPROM
- 
+
 void setup()
 {
   Serial.begin(9600);

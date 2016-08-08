@@ -1,3 +1,8 @@
+// Main code for LMS using RFID
+// 3 users with accessibility to 7 books
+// Run the code after executing eeprom.pde
+
+
 #include <LiquidCrystal.h>
 #include <EEPROM.h>
 #include <NewSoftSerial.h>
@@ -28,10 +33,10 @@ const int button_one = 2;
 const int button_two = 3;
 boolean ok_flag,r_flag,b_flag,a_flag,c_flag,run_flag,flag1 = 0;
 int value=0;
-int  val = 0; 
+int  val = 0;
 char code[10] = {
-  0}; 
-int bytesread,buffer = 0; 
+  0};
+int bytesread,buffer = 0;
 #define rxPin 8
 #define txPin 9
 NewSoftSerial RFID (rxPin, txPin);
@@ -211,18 +216,18 @@ boolean compareTag(char one[], char two[])
 
 
 
-void setup() 
+void setup()
 {
   lcd.begin(16, 2);
   Serial.begin(9600);
   RFID.begin(2400);
-  pinMode(rxPin,INPUT); 
-  pinMode(txPin,OUTPUT); 
+  pinMode(rxPin,INPUT);
+  pinMode(txPin,OUTPUT);
   pinMode(button_one,INPUT);
   pinMode(button_two,INPUT);
-  lcd.createChar(3, armsDown);  
+  lcd.createChar(3, armsDown);
   // create a new character
-  lcd.createChar(4, armsUp); 
+  lcd.createChar(4, armsUp);
   lcd.setCursor(2, 0);
   lcd.print("Welcome To");
   lcd.setCursor(2,1);
@@ -242,11 +247,11 @@ void setup()
     lcd.setCursor(0,1);
     // draw him arms up:
     lcd.write(4);
-    delay(300);    
-  }  
+    delay(300);
+  }
   //delay(2000);
   lcd.clear();
-  lcd.setCursor(0,0);  
+  lcd.setCursor(0,0);
   lcd.print("Scanning.....");
   issue3_flag = 0;
   return3_flag = 0;
@@ -257,15 +262,15 @@ void setup()
   bookenableflag=0;
 }
 
-void loop() 
+void loop()
 {
   lcd.clear();
-  lcd.setCursor(0,0);  
+  lcd.setCursor(0,0);
   lcd.print("Scanning.....");
   lcd.setCursor(0,1);
   rfid();
   checkTag(code); //Check if it is a match
-  clearTag(code); //Clear the char of all value  
+  clearTag(code); //Clear the char of all value
   delay(1000);
   if(r_flag == 1)
   {
@@ -286,9 +291,9 @@ void invalied(void)
   lcd.print("Try Again      ") ;
   delay(2000);
   lcd.clear();
-  lcd.setCursor(0,0);  
+  lcd.setCursor(0,0);
   lcd.print("Scanning.....");
-}  
+}
 
 void transaction()
 {
@@ -316,9 +321,9 @@ void transaction()
           lcd.print("Scan the Book  ") ;
         }
         lcd.setCursor(0,1);
-        rfid(); 
+        rfid();
         checkTag(code); //Check if it is a match
-        clearTag(code); //Clear the char of all value  
+        clearTag(code); //Clear the char of all value
         delay(1000);
         lcd.clear();
         lcd.setCursor(0,0);
@@ -327,7 +332,7 @@ void transaction()
         lcd.print("Cancel Press 2 ") ;
         lcd.setCursor(0,0);
       }
-      while(!run_flag) 
+      while(!run_flag)
       {
         b1state = digitalRead(button_one);
         b2state = digitalRead(button_two);
@@ -375,7 +380,7 @@ void transaction()
               c_flag = 0;
               return;
             }
-          
+
           if(user_no == 1)
           {
             eeprom_buff = EEPROM.read(user1_loc);
@@ -390,10 +395,10 @@ void transaction()
               delay(1000);
               run_flag = 1;
               flag1 = 1;
-              c_flag = 0; 
-            }  
+              c_flag = 0;
+            }
             if(eeprom_buff < book_count)
-            {  
+            {
               eeprom_buff = EEPROM.read(user1_loc);
               lcd.clear();
               lcd.setCursor(0,0);
@@ -403,14 +408,14 @@ void transaction()
               EEPROM.write(user1_loc,eeprom_buff+1);
               lcd.setCursor(0,1);
               eeprom_buff = EEPROM.read(user1_loc);
-              lcd.write((0x30+eeprom_buff));                                   
+              lcd.write((0x30+eeprom_buff));
               EEPROM.write(user1_loc+(book_no),book_no);
               delay(1000);
               run_flag = 1;
               flag1 = 1;
               c_flag = 0;
-            } 
-          }   
+            }
+          }
 
           if(user_no == 2)
           {
@@ -428,10 +433,10 @@ void transaction()
               delay(1000);
               run_flag = 1;
               flag1 = 1;
-              c_flag = 0; 
-            }                 
+              c_flag = 0;
+            }
             if(eeprom_buff < book_count)
-            { 
+            {
               lcd.print("Books in Account") ;
               EEPROM.write(user2_loc,eeprom_buff+1);
               Serial.println(eeprom_buff+1);
@@ -446,7 +451,7 @@ void transaction()
               flag1 = 1;
               c_flag = 0;
             }
-          }  
+          }
 
           if(user_no == 3)
           {
@@ -462,10 +467,10 @@ void transaction()
               delay(1000);
               run_flag = 1;
               flag1 = 1;
-              c_flag = 0; 
+              c_flag = 0;
             }
             if(eeprom_buff < book_count)
-            {  
+            {
               eeprom_buff = EEPROM.read(user3_loc);
               lcd.clear();
               lcd.setCursor(0,0);
@@ -482,7 +487,7 @@ void transaction()
               run_flag = 1;
               flag1 = 1;
               c_flag = 0;
-            } 
+            }
           }
 
 
@@ -496,8 +501,8 @@ void transaction()
           run_flag = 1;
           flag1 = 1;
           c_flag = 0;
-        }    
-      } 
+        }
+      }
     }
     if(b2state == LOW)
     {
@@ -509,17 +514,17 @@ void transaction()
         lcd.setCursor(0,1);
         lcd.print("Scan the Book  ") ;
         lcd.setCursor(0,1);
-        rfid(); 
+        rfid();
         checkTag(code); //Check if it is a match
-        clearTag(code); //Clear the char of all value  
+        clearTag(code); //Clear the char of all value
         delay(1000);
         lcd.clear();
         lcd.setCursor(0,0);
         lcd.print("Accept Press 1  ") ;
         lcd.setCursor(0,1);
         lcd.print("Cancel Press 2  ") ;
-      } 
-      while(!run_flag) 
+      }
+      while(!run_flag)
       {
         b1state = digitalRead(button_one);
         b2state = digitalRead(button_two);
@@ -552,7 +557,7 @@ void transaction()
             delay(1000);
             run_flag = 1;
             flag1 = 1;
-          }   
+          }
           if(user_no == 2)
           {
             eeprom_buff = EEPROM.read(user2_loc+(book_no));
@@ -581,7 +586,7 @@ void transaction()
             delay(1000);
             run_flag = 1;
             flag1 = 1;
-          }   
+          }
 
           if(user_no == 3)
           {
@@ -611,7 +616,7 @@ void transaction()
             delay(1000);
             run_flag = 1;
             flag1 = 1;
-          }   
+          }
 
          /* if(user_no == 4)
           {
@@ -641,7 +646,7 @@ void transaction()
             delay(1000);
             run_flag = 1;
             flag1 = 1;
-          }   
+          }
 
           if(user_no == 5)
           {
@@ -671,7 +676,7 @@ void transaction()
             delay(1000);
             run_flag = 1;
             flag1 = 1;
-          } */  
+          } */
         }
         if(b2state == LOW)
         {
@@ -682,9 +687,9 @@ void transaction()
           run_flag = 1;
           flag1 = 1;
         }
-      } 
+      }
 
-    } 
+    }
   }
   //delay(2000);
 }
@@ -719,9 +724,9 @@ void issue()
       if(eeprom_buff != 0)
       {
         lcd.write(0x30+eeprom_buff);
-      }                    
+      }
     }
-    delay(2000); 
+    delay(2000);
     c_flag = 1;
   }
 
@@ -754,9 +759,9 @@ void issue()
       if(eeprom_buff != 0)
       {
         lcd.write(0x30+eeprom_buff);
-      }                    
+      }
     }
-    delay(2000); 
+    delay(2000);
     c_flag = 1;
   }
 
@@ -788,9 +793,9 @@ void issue()
       if(eeprom_buff != 0)
       {
         lcd.write(0x30+eeprom_buff);
-      }                    
+      }
     }
-    delay(2000); 
+    delay(2000);
     c_flag = 1;
   }
 
@@ -822,9 +827,9 @@ void issue()
       if(eeprom_buff != 0)
       {
         lcd.write(0x30+eeprom_buff);
-      }                    
+      }
     }
-    delay(2000); 
+    delay(2000);
     c_flag = 1;
   }
 
@@ -856,9 +861,9 @@ void issue()
       if(eeprom_buff != 0)
       {
         lcd.write(0x30+eeprom_buff);
-      }                    
+      }
     }
-    delay(2000); 
+    delay(2000);
     c_flag = 1;
   }*/
 
@@ -886,44 +891,30 @@ void rfid(void)
 {
   address=0;
   if(RFID.available() > 0)
-  {  
-    bytesread = 0; 
+  {
+    bytesread = 0;
     while(bytesread<9)
-    {  
+    {
       if(RFID.available() > 0)
-      {     
-        val = RFID.read(); 
+      {
+        val = RFID.read();
         if((val == 10)||(val == 13))
-        { 
-          code[bytesread] = ' ';  
-          bytesread++;                  
-        } 
+        {
+          code[bytesread] = ' ';
+          bytesread++;
+        }
         else
-        {   
-          code[bytesread] = val;                  
-          bytesread++;                  
-        } 
+        {
+          code[bytesread] = val;
+          bytesread++;
+        }
       }
       if(bytesread == 9)
-      {  
+      {
         ok_flag = 1;
       }
     }
-    bytesread = 0; 
-  } 
+    bytesread = 0;
+  }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
